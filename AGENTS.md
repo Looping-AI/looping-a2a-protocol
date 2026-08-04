@@ -1,7 +1,8 @@
 # AGENTS.md — working in `looping-a2a-protocol`
 
-This package is **60 lines of constants and three pure functions**. That is not
-an accident or a stage it will grow out of; it is the specification.
+This package is **a handful of constants and four pure functions**. That is not
+an accident or a stage it will grow out of; it is the specification. If a change
+here needs a paragraph to justify its size, it belongs in a consumer.
 
 Two services that must never share a runtime — `@loopingai/core` (the agent
 runtime) and `looping-gateway` (which must not import it) — both depend on this.
@@ -14,10 +15,13 @@ from that one fact.
 
 **1. No dependencies. None.**
 Not `jose`, not `@a2a-js/sdk`, not `node:*`, not a type-only import. The only
-global anything here may touch is `URL`. `scripts/verify-exports.mjs` fails the
-build on any bare import reaching `dist/`, and on any `dependencies`,
-`peerDependencies` or `optionalDependencies` key in the manifest — check it
-before assuming a convenience import is fine.
+global the _published_ code touches is `URL`; a spec may reach for `Headers` to
+prove a header name behaves, and specs never ship.
+
+`scripts/verify-exports.mjs` fails the build on any bare import reaching
+`dist/`, and on any `dependencies`, `peerDependencies` or
+`optionalDependencies` key in the manifest — check it before assuming a
+convenience import is fine.
 
 **2. No behaviour, only names and pure string rules.**
 Nothing here signs, verifies, fetches, or reads configuration. The moment this
@@ -27,13 +31,28 @@ it, and the boundary that made the split worth doing is gone.
 The verification chain stays in core. The card and endpoint checks stay in the
 gateway. They are not the same check and must not be made to look like one.
 
-**3. Nothing the A2A spec already fixes.**
-`AGENT_CARD_PATH` and `A2A_PROTOCOL_VERSION` come from `@a2a-js/sdk` in both
-consumers. Redeclaring either creates a second source of truth for something
-that already has one — the exact problem this package was built to remove.
+**3. Nothing the A2A spec already fixes _and exports_.**
+`AGENT_CARD_PATH`, `A2A_PROTOCOL_VERSION` and `A2A_VERSION_HEADER` come from
+`@a2a-js/sdk` in both consumers. Redeclaring any of them creates a second source
+of truth for something that already has one — the exact problem this package was
+built to remove.
 
-The test for whether a value belongs here: **did Looping choose it, and do two
-repos have to spell it identically?** Both, or it goes elsewhere.
+"And exports" is load-bearing, and `NOTIFICATION_TOKEN_HEADER` is why. That name
+is the SDK's own default, so on ownership alone it fails this rule — but the SDK
+never exports it, it only appears as an inline `?? "X-A2A-Notification-Token"`
+fallback. Neither consumer could import it, so both declared it, each with a
+comment saying it had to match the other. **A value nobody can reference has no
+source of truth to be a second one of.** If the SDK ever exports it, delete ours.
+
+So the test for whether a value belongs here is two questions:
+
+1. **Must two repos spell it identically?** If not, it is local — the gateway's
+   `A2A_ENDPOINT_PATH` is `/a2a` too, but it is a placeholder for in-process
+   Durable Object cards that nothing on the far side reads, so it stays put.
+2. **Can they both import it from somewhere that already owns it?** If yes, they
+   should, and it does not come here.
+
+Both must point this way, or it goes elsewhere.
 
 ---
 
@@ -77,10 +96,11 @@ typechecking them.
 
 `tsconfig.json` sets `types: []` and `lib: ["ES2022", "DOM"]`. The empty `types`
 is what keeps rule 1 true at the type level — there is no `process`, no `Env`,
-no test global in scope. `DOM` is present for exactly one type, the WHATWG
-`URL`, and `no-restricted-globals` in `eslint.config.js` blocks the browser
-globals it drags in with it. If you find yourself widening either, that is the
-signal the code wants to live in a consumer instead.
+no test global in scope. `DOM` is there for the WHATWG types the wire rules are
+built on: `URL` in the published code, `Headers` in one spec. Everything else it
+drags in is blocked by `no-restricted-globals` in `eslint.config.js`. If you
+find yourself widening either, that is the signal the code wants to live in a
+consumer instead.
 
 ---
 

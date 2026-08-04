@@ -34,12 +34,20 @@
  * | `/.well-known/jwks.json` | RFC 8615, but not required by A2A |
  * | `audienceFor` | the spec does not specify audience derivation |
  *
- * Anything the protocol itself fixes stays in `@a2a-js/sdk` — `AGENT_CARD_PATH`
- * and `A2A_PROTOCOL_VERSION` are already shared and are deliberately not
- * redeclared here. Anything either side *enforces* stays with that side: the
- * zero-trust verification checks live in `@loopingai/core`, the card and
- * endpoint checks live in the gateway. This package holds names and pure string
- * rules, and holding nothing else is what keeps it safe for both to import.
+ * Anything the protocol itself fixes stays in `@a2a-js/sdk` — `AGENT_CARD_PATH`,
+ * `A2A_PROTOCOL_VERSION`, `A2A_VERSION_HEADER` are all exported there, already
+ * shared by both consumers, and deliberately not redeclared here.
+ *
+ * The one exception is mechanical rather than a matter of ownership.
+ * {@link NOTIFICATION_TOKEN_HEADER} is the SDK's own default, but the SDK
+ * **does not export it** — it exists only as an inline fallback — so neither
+ * consumer could import it and both declared it instead. A value nobody can
+ * reference has no source of truth to be a second one of.
+ *
+ * Anything either side *enforces* stays with that side: the zero-trust
+ * verification checks live in `@loopingai/core`, the card and endpoint checks
+ * live in the gateway. This package holds names and pure string rules, and
+ * holding nothing else is what keeps it safe for both to import.
  *
  * ## Changing it
  *
@@ -65,3 +73,5 @@ export {
 export { A2A_RPC_PATH, JWKS_PATH, endpointUrl, jwksUrl } from "./paths.js";
 
 export { audienceFor } from "./audience.js";
+
+export { NOTIFICATION_TOKEN_HEADER } from "./notifications.js";
