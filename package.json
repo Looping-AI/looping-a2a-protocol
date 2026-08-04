@@ -1,0 +1,66 @@
+{
+  "name": "@loopingai/a2a-protocol",
+  "version": "0.1.0",
+  "description": "Zero-dependency wire contract for Looping's A2A authentication: the claim names, well-known paths, and audience rule shared by token issuers and agent runtimes.",
+  "keywords": [
+    "a2a",
+    "agent2agent",
+    "ai-agents",
+    "wire-contract",
+    "jwt",
+    "jwks",
+    "eddsa",
+    "zero-trust"
+  ],
+  "license": "GPL-3.0-only",
+  "author": "Looping AI",
+  "homepage": "https://github.com/Looping-AI/looping-a2a-protocol#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Looping-AI/looping-a2a-protocol.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Looping-AI/looping-a2a-protocol/issues"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "format": "prettier --write .",
+    "lint": "eslint .",
+    "check": "prettier --check . && eslint . && tsc && npm run build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "verify:exports": "node scripts/verify-exports.mjs",
+    "prepack": "npm run build && npm run verify:exports",
+    "prepublishOnly": "npm run check && npm test && npm run verify:exports"
+  },
+  "devDependencies": {
+    "eslint": "^10.8.0",
+    "prettier": "^3.9.6",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.66.0",
+    "vitest": "^4.1.10"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "allowScripts": {
+    "fsevents": false
+  }
+}

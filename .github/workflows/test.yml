@@ -1,0 +1,44 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+# Superseded PR runs are cancelled; main is not, because Release keys off the
+# run that Test completes there.
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  test:
+    timeout-minutes: 10
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-node@v6
+        with:
+          # One source of truth with local dev; `engines` requires >=24.
+          node-version-file: .nvmrc
+
+      - run: npm ci
+
+      # `npm test` alone would pass on code that neither typechecks nor formats:
+      # vitest transpiles specs without checking them, and the type-aware
+      # `no-deprecated` rule only runs here. `check` also builds, which the
+      # export gate below reads.
+      - run: npm run check
+
+      - run: npm test
+
+      # The defects that only fail at a consumer — and, for this package, the
+      # one that would quietly undo the reason it was split out: a bare import
+      # reaching `dist/`. See scripts/verify-exports.mjs.
+      - run: npm run verify:exports

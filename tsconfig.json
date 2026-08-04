@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    // `DOM` is here for exactly one type: the WHATWG `URL` that `audienceFor`
+    // is built on. It is not in `lib.es2022`, and it cannot be replaced by hand
+    // — the normalization it performs (case-folding the authority, dropping a
+    // default port, separating the query and fragment) *is* the audience rule,
+    // and a substring implementation would diverge from the other side's.
+    //
+    // The alternative, `@types/node`, would bring `process` and `Buffer` with
+    // it and quietly permit `node:*` imports in a package that must run in a
+    // Worker. `no-restricted-globals` in eslint.config.js blocks the
+    // browser-only globals DOM drags in; nothing else here should reach for a
+    // platform API at all.
+    "lib": ["ES2022", "DOM"],
+    // No ambient type packages. This package has no dependencies, and an empty
+    // `types` is what keeps that true at the type level: there is no `Env`, no
+    // `process`, no test global in scope anywhere in `src/`, so reaching for
+    // one fails here rather than at a consumer's build.
+    "types": [],
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true
+  },
+  // Specs included: eslint's type-aware pass resolves each file to its
+  // *nearest* tsconfig, so a co-located spec excluded here has no project at
+  // all and fails to parse. `tsconfig.build.json` is where specs are held out
+  // of `dist`.
+  "include": ["src/**/*.ts"]
+}
