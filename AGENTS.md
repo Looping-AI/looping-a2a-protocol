@@ -43,10 +43,18 @@ A change here is a change to the wire. The two sides do not interoperate across
 it in either direction — a mismatched claim name is a total outage, not a
 degraded mode. So:
 
-- **Bump the minor version.** While this package is 0.x, npm reads `^0.1.0` as
-  `0.1.x` only, so a minor bump is a hard break that no `npm update` picks up —
-  someone has to type the new range and notice why. Patch releases are for
-  documentation and packaging; if a release changes a string, it is not one.
+- **Bump the minor version**, with `npm version minor` rather than by hand.
+  While this package is 0.x, npm reads `^0.1.0` as `0.1.x` only, so a minor bump
+  is a hard break that no `npm update` picks up — someone has to type the new
+  range and notice why. Patch releases are for documentation and packaging; if a
+  release changes a string, it is not one.
+
+  Editing `version` or `engines` in `package.json` directly leaves
+  `package-lock.json` behind, and **nothing in CI will say so**: `npm ci`
+  hard-errors when the _dependencies_ drift, and is silent when the root
+  metadata does. It is cosmetic — the tarball and the release workflow both read
+  `package.json` — but run `npm install` before committing anyway.
+
 - **Ship both consumers in the same release.** There is no ordering where one
   goes first safely.
 - **Update `src/claims.spec.ts` by hand.** Those assertions are literals, not

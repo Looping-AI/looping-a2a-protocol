@@ -136,7 +136,13 @@ export function readIdentityClaim(
   claim: string = IDENTITY_CLAIM
 ): GatewayIdentity {
   const value = payload[claim];
-  return typeof value === "object" && value !== null
+  // `typeof value === "object"` alone admits `null` and arrays. Both would be
+  // returned typed as a `GatewayIdentity` that is not one — harmless at the
+  // `.key` lookup that follows, since it reads `undefined` either way and the
+  // caller rejects, but a lie to anything that spreads or enumerates it. This
+  // package is the shared definition of the shape; returning a value that does
+  // not have it is the one thing it must not do.
+  return typeof value === "object" && value !== null && !Array.isArray(value)
     ? (value as GatewayIdentity)
     : {};
 }

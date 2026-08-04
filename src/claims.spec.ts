@@ -107,6 +107,17 @@ describe("reading claims off a verified payload", () => {
       readIdentityClaim({ [IDENTITY_CLAIM]: "remote:7:analytics" })
     ).toEqual({});
     expect(readIdentityClaim({ [IDENTITY_CLAIM]: null })).toEqual({});
+    expect(readIdentityClaim({ [IDENTITY_CLAIM]: 7 })).toEqual({});
+  });
+
+  it("does not mistake an array for an identity", () => {
+    // `typeof [] === "object"` and `[] !== null`, so the obvious guard admits
+    // one. It would be returned typed as a `GatewayIdentity` that is not one:
+    // harmless at the `.key` lookup that follows, and a lie to anything that
+    // spreads or enumerates it afterwards.
+    const identity = readIdentityClaim({ [IDENTITY_CLAIM]: ["a", "b"] });
+    expect(identity).toEqual({});
+    expect(Array.isArray(identity)).toBe(false);
   });
 
   it("returns an empty tenant when the claim is absent or not a string", () => {
