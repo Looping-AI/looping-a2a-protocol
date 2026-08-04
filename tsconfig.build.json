@@ -7,8 +7,7 @@
     // package does not publish — `files` is `dist` only, and adding `src` would
     // drag the specs and their `vitest` import into every consumer's tarball.
     // Dangling maps are not free: every consumer's test run prints "Sourcemap
-    // for … points to missing source files", four lines of noise per run, for a
-    // package that is 270 lines of constants.
+    // for … points to missing source files", one line per module, every run.
     //
     // Nothing is lost. The emitted `.d.ts` carries every doc comment and the
     // full types, so go-to-definition lands on documentation either way. This is
