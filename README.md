@@ -57,20 +57,27 @@ depending on it commits a consumer to nothing at all.
 
 Only the choices **Looping** made where the A2A spec left room.
 
-| Value                            | Why it is ours to define                      |
-| -------------------------------- | --------------------------------------------- |
-| `IDENTITY_CLAIM`, `TENANT_CLAIM` | the spec leaves client auth open (§7.4)       |
-| `A2A_JWS_ALG` (`EdDSA`)          | the spec permits several; pinning one is ours |
-| `A2A_RPC_PATH` (`/a2a`)          | the spec lets an agent serve anywhere         |
-| `JWKS_PATH`                      | RFC 8615 convention, not required by A2A      |
-| `audienceFor`                    | the spec does not specify audience derivation |
+| Value                            | Why it is ours to define                         |
+| -------------------------------- | ------------------------------------------------ |
+| `IDENTITY_CLAIM`, `TENANT_CLAIM` | the spec leaves client auth open (§7.4)          |
+| `A2A_JWS_ALG` (`EdDSA`)          | the spec permits several; pinning one is ours    |
+| `A2A_RPC_PATH` (`/a2a`)          | the spec lets an agent serve anywhere            |
+| `JWKS_PATH`                      | RFC 8615 convention, not required by A2A         |
+| `audienceFor`                    | the spec does not specify audience derivation    |
+| `NOTIFICATION_TOKEN_HEADER`      | the SDK's default, which the SDK does not export |
 
 Two things stay out, and the boundary matters more than the contents.
 
-**What the protocol already fixes** stays in `@a2a-js/sdk`. `AGENT_CARD_PATH`
-and `A2A_PROTOCOL_VERSION` are already shared by both consumers from there;
-redeclaring them would create a second source of truth for something that
-already has one.
+**What the protocol already fixes _and exports_** stays in `@a2a-js/sdk`.
+`AGENT_CARD_PATH`, `A2A_PROTOCOL_VERSION` and `A2A_VERSION_HEADER` are already
+shared by both consumers from there; redeclaring them would create a second
+source of truth for something that already has one.
+
+The last row of the table is the exception that makes "and exports" matter.
+`X-A2A-Notification-Token` is the SDK's own default, but it exists only as an
+inline fallback and is never exported — so neither consumer could import it and
+both declared it instead. A value nobody can reference has no source of truth to
+be a second one of. If the SDK ever exports it, ours should go.
 
 **What either side enforces** stays with that side. The zero-trust verification
 chain — `jku` present → origin allowlist → `iss` origin matches `jku` origin →
