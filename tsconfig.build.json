@@ -3,8 +3,15 @@
   "compilerOptions": {
     "noEmit": false,
     "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
+    // No `declarationMap` or `sourceMap`. A map points at `../src`, which this
+    // package does not publish — `files` is `dist` only, and adding `src` would
+    // drag the specs and their `vitest` import into every consumer's tarball.
+    // Dangling maps are not free: every consumer's test run prints "Sourcemap
+    // for … points to missing source files", one line per module, every run.
+    //
+    // Nothing is lost. The emitted `.d.ts` carries every doc comment and the
+    // full types, so go-to-definition lands on documentation either way. This is
+    // the one package where the declarations really are the readable source.
     "outDir": "./dist",
     "rootDir": "./src"
   },

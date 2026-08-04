@@ -1,6 +1,6 @@
 {
   "name": "@loopingai/a2a-protocol",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Zero-dependency wire contract for Looping's A2A authentication: the claim names, well-known paths, and audience rule shared by token issuers and agent runtimes.",
   "keywords": [
     "a2a",
