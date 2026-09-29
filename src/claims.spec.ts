@@ -79,22 +79,22 @@ describe("building a token's claims", () => {
   };
 
   it("puts each value under the claim that owns it", () => {
-    const claims = gatekeeperTokenClaims(identity, "reactive");
+    const claims = gatekeeperTokenClaims(identity, "generic");
     expect(claims["https://dynamicagents.dev/identity"]).toEqual(identity);
-    expect(claims["https://dynamicagents.dev/tenant"]).toBe("reactive");
+    expect(claims["https://dynamicagents.dev/tenant"]).toBe("generic");
   });
 
   it("round-trips through the readers", () => {
-    const claims = gatekeeperTokenClaims(identity, "reactive");
+    const claims = gatekeeperTokenClaims(identity, "generic");
     expect(readIdentityClaim(claims)).toEqual(identity);
-    expect(readTenantClaim(claims)).toBe("reactive");
+    expect(readTenantClaim(claims)).toBe("generic");
   });
 
   it("adds nothing else", () => {
     // Registered claims are the signer's business. If this package started
     // setting `exp` or `iss`, two signers would disagree about who owns them.
     expect(
-      Object.keys(gatekeeperTokenClaims(identity, "reactive"))
+      Object.keys(gatekeeperTokenClaims(identity, "generic"))
     ).toHaveLength(2);
   });
 });
@@ -137,10 +137,10 @@ describe("reading claims off a verified payload", () => {
   it("honours an overridden claim name for a third-party issuer", () => {
     expect(
       readTenantClaim(
-        { "https://other.test/tenant": "reactive" },
+        { "https://other.test/tenant": "generic" },
         "https://other.test/tenant"
       )
-    ).toBe("reactive");
+    ).toBe("generic");
   });
 });
 

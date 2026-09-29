@@ -21,7 +21,7 @@ import {
 } from "@dynamicagents/g2a-protocol";
 
 // Issuing side
-const token = await new SignJWT(gatekeeperTokenClaims(identity, "reactive"))
+const token = await new SignJWT(gatekeeperTokenClaims(identity, "generic"))
   .setProtectedHeader({ alg: A2A_JWS_ALG, kid, jku: jwksUrl(issuer) })
   .setIssuer(issuer)
   .setAudience(audienceFor(agentEndpoint))
