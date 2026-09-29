@@ -1,6 +1,6 @@
 {
   "name": "@dynamicagents/g2a-protocol",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Zero-dependency wire contract for Dynamic Agents' gatekeeper-to-agent link: the claim names, well-known paths and audience rule of its A2A authentication, and the parts a human-in-the-loop question travels in.",
   "keywords": [
     "a2a",

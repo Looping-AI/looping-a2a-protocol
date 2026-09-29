@@ -71,6 +71,23 @@ describe("the part shapes", () => {
     }>().toExtend<HitlRequestData>();
   });
 
+  it("takes an approval of an artifact, which names its id and link", () => {
+    expectTypeOf<{
+      type: "https://dynamicagents.dev/hitl/request";
+      requestId: string;
+      requestKind: "approval";
+      prompt: string;
+      artifact: { id: string; url: string };
+    }>().toExtend<HitlRequestData>();
+    expectTypeOf<{
+      type: "https://dynamicagents.dev/hitl/request";
+      requestId: string;
+      requestKind: "approval";
+      prompt: string;
+      artifact: { id: string };
+    }>().not.toExtend<HitlRequestData>();
+  });
+
   it("takes an answer picked from the options, and one typed out", () => {
     expectTypeOf<{
       type: "https://dynamicagents.dev/hitl/response";
