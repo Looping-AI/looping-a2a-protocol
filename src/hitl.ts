@@ -63,6 +63,20 @@ export interface HitlOption {
   style?: "primary" | "danger" | "default";
 }
 
+/**
+ * Something a question asks a person to look at before answering — a plan to
+ * approve, say.
+ */
+export interface HitlArtifact {
+  /**
+   * The agent's name for it, which the agent acts on when the answer comes back.
+   * A gatekeeper has no use for it.
+   */
+  id: string;
+  /** Where a person reads it. */
+  url: string;
+}
+
 /** The question, as the `data` of a {@link HITL_REQUEST_TYPE} part. */
 export interface HitlRequestData {
   type: typeof HITL_REQUEST_TYPE;
@@ -81,6 +95,12 @@ export interface HitlRequestData {
   display?: "buttons" | "radio" | "select";
   /** Whether a typed answer is accepted alongside the options. */
   allowFreeform?: boolean;
+  /**
+   * What the question is about, for a gatekeeper to link beside the prompt. The
+   * prompt carries its `url` too, so a gatekeeper that renders none of this
+   * still shows it.
+   */
+  artifact?: HitlArtifact;
 }
 
 /**

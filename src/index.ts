@@ -38,6 +38,7 @@ export {
   HITL_REQUEST_TYPE,
   HITL_RESPONSE_TYPE,
   HITL_TIMEOUT_TYPE,
+  type HitlArtifact,
   type HitlOption,
   type HitlRequestData,
   type HitlRequestKind,
