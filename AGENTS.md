@@ -9,11 +9,12 @@ call leaving an agent crosses a gatekeeper and stays observable to a human.
 Subagents run inside an agent's own boundary and are not this protocol. The
 crossing itself speaks A2A — see README.md, "Why `g2a`".
 
-Two services that must never share a runtime — `@dynamicagents/core` (the agent
-runtime) and `slack-gatekeeper` (which must not import it) — both depend on
-this.
-That is only safe while depending on it costs nothing. Every rule below follows
-from that one fact.
+Both sides of every crossing depend on this: `@dynamicagents/core` (the agent
+runtime) and `slack-gatekeeper`. The gatekeeper also hosts its own built-in
+agents on core, and still reaches them across this contract, exactly as it
+reaches a remote one. A package on both sides of every crossing is only safe
+while depending on it costs nothing. Every rule below follows from that one
+fact.
 
 ---
 
@@ -130,6 +131,5 @@ consumer instead.
 | `slack-gatekeeper` | minting outbound tokens, its `/.well-known/jwks.json`, and rendering and answering those questions              |
 
 `core` re-exports these names from `@dynamicagents/core/a2a` so agents built on
-it never install this package directly. The gatekeeper depends on it directly,
-which is the arrangement that lets it share the contract while importing none of
-the agent runtime.
+it never install this package directly. The gatekeeper depends on it directly:
+it mints with it for every agent it calls, its own built-ins included.
