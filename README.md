@@ -58,20 +58,19 @@ _how_ they talk.
 
 ## Why this package exists
 
-The two sides of this contract cannot share code any other way.
-
-`@dynamicagents/core` is the agent runtime. A gatekeeper is not an agent and
-must not import it — that is a security and architecture rule, not a packaging
-preference. So the contract lived as a comment in each repo saying _must match
-the other_, and it failed exactly as that always does: one side moved to the
+The two sides of this contract have to spell it identically, and a comment in
+each repo saying _must match the other_ is not how to get there. It failed
+exactly as that always does: one side moved to the
 `loopingai.org` claim namespace while the other kept minting
 `https://looping.ai/tenant`. The verifier read an empty tenant, compared it
 against the tenant the request body addressed, and **every request 401'd**.
 Nothing in either repo's build noticed, because each side was internally
 consistent.
 
-This package is the shared artifact that rule permits: small enough that
-depending on it commits a consumer to nothing at all.
+This package is the contract as one shared artifact, small enough that depending
+on it commits a consumer to nothing at all. That matters most to a gatekeeper
+that hosts no agents: it should not have to take on an agent runtime to speak
+to one.
 
 ## What belongs here
 
@@ -115,10 +114,9 @@ holding nothing else is what makes it safe for both to import.
 if the manifest declares dependencies of any kind. It runs on `prepack`, on
 `prepublishOnly`, and in CI.
 
-That check is the package. One `import { X } from "jose"` and a gatekeeper
-depending on this is transitively depending on an agent runtime's toolchain —
-silently, in a patch release, which is the whole failure mode this was split out
-to prevent. The only global anything here touches is `URL`.
+That check is the package. One `import { X } from "jose"` and every consumer
+depending on this transitively depends on that toolchain — silently, in a patch
+release, which is the whole failure mode this was split out to prevent. The only global anything here touches is `URL`.
 
 ## Changing the contract
 
